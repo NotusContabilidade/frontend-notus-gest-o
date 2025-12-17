@@ -1,0 +1,88 @@
+/* src/pages/Login/Login.css */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Fundo sutil gradiente vinho muito escuro */
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a0508 100%);
+}
+
+.login-card {
+  background-color: var(--cor-painel);
+  padding: 2.5rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid var(--cor-borda);
+  box-shadow: var(--sombra);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h1 {
+  font-size: 2rem;
+  color: var(--cor-texto);
+  letter-spacing: 1px;
+}
+
+.login-header p {
+  color: var(--cor-primaria);
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--cor-texto-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--cor-fundo);
+  border: 1px solid var(--cor-borda);
+  border-radius: 4px;
+  color: var(--cor-texto);
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+  border-color: var(--cor-primaria);
+}
+
+.btn-entrar {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--cor-primaria);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-entrar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
