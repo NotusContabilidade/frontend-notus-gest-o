@@ -1,0 +1,181 @@
+/* src/pages/Auditoria/Auditoria.css */
+
+.auditoria-container {
+  width: 100%;
+  max-width: 1000px; /* Limita a largura para leitura confortável */
+  margin: 0 auto;
+}
+
+/* --- Barra de Filtros --- */
+.filtros-bar {
+  background-color: var(--cor-painel);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  margin-bottom: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.filtro-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-group.search {
+  flex: 1; /* A busca ocupa o espaço restante */
+  min-width: 250px;
+}
+
+.filtro-group label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.filtro-group input,
+.filtro-group select {
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.filtro-group input:focus,
+.filtro-group select:focus {
+  border-color: var(--cor-primaria);
+  outline: none;
+}
+
+/* --- Timeline (Linha do Tempo) --- */
+.timeline-area {
+  position: relative;
+  padding-bottom: 50px;
+}
+
+.timeline {
+  position: relative;
+  /* Linha Vertical */
+  border-left: 2px solid #333;
+  margin-left: 20px; /* Espaço para a linha */
+  padding-left: 30px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+/* O marcador (Bolinha com Ícone) */
+.timeline-marker {
+  position: absolute;
+  left: -51px; /* Ajuste fino para centralizar na linha */
+  top: 0;
+  width: 40px;
+  height: 40px;
+  background-color: #252525;
+  border: 2px solid var(--cor-primaria); /* Borda Vinho */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.timeline-marker .icon {
+  font-size: 1.2rem;
+}
+
+/* O Conteúdo (Card) */
+.timeline-content {
+  background-color: var(--cor-painel);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.2rem;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.timeline-content:hover {
+  border-color: #555;
+  transform: translateX(5px);
+}
+
+/* Setinha apontando para a linha */
+.timeline-content::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 12px;
+  width: 15px;
+  height: 15px;
+  background-color: var(--cor-painel);
+  border-left: 1px solid #333;
+  border-bottom: 1px solid #333;
+  transform: rotate(45deg);
+}
+
+/* Cabeçalho do Card */
+.timeline-content .header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.timeline-content .time {
+  color: var(--cor-primaria);
+  font-weight: bold;
+}
+
+.timeline-content .user {
+  color: #888;
+  background-color: #1a1a1a;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Título e Descrição */
+.action-title {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.description {
+  color: #bbb;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.client-tag {
+  color: #fff;
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+/* Metadados (IP, Navegador) */
+.metadata {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #333;
+  font-size: 0.75rem;
+  color: #666;
+  display: flex;
+  gap: 15px;
+}
+
+/* Estados Vazios */
+.status-text, .empty-state {
+  text-align: center;
+  color: #777;
+  padding: 3rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px dashed #333;
+}

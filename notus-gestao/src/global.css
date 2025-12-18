@@ -1,34 +1,33 @@
-/* src/global.css */
 :root {
-  /* Paleta Nótus */
-  --cor-fundo: #121212;       /* Preto quase absoluto */
-  --cor-painel: #1e1e1e;      /* Cinza escuro para cards */
-  --cor-borda: #333333;       /* Cinza para divisórias */
-  
-  --cor-primaria: #720e1e;    /* Vinho Nótus (Escuro) */
-  --cor-primaria-hover: #961228; /* Vinho mais claro para hover */
-  
-  --cor-texto: #e0e0e0;       /* Branco gelo */
-  --cor-texto-secundario: #a0a0a0; /* Cinza claro */
-  
+  --cor-fundo: #121212;
+  --cor-painel: #1e1e1e;
+  --cor-borda: #333333;
+  --cor-primaria: #720e1e;
+  --cor-primaria-hover: #961228;
+  --cor-texto: #e0e0e0;
+  --cor-texto-secundario: #a0a0a0;
   --sombra: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
+/* RESETA TUDO e remove o comportamento padrão do Vite */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
   background-color: var(--cor-fundo);
   color: var(--cor-texto);
-  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden; /* Evita rolagem horizontal */
 }
 
-input, button {
-  font-family: inherit;
-  font-size: 1rem;
-  outline: none;
+/* IMPORTANTE: Garante que o React ocupe a tela toda */
+#root {
+  width: 100%;
+  height: 100%;
+  display: block; /* Remove o display: flex padrão do Vite se houver */
 }

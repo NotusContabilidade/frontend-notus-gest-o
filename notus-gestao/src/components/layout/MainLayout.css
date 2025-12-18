@@ -1,0 +1,73 @@
+/* src/components/Layout/MainLayout.css */
+
+.layout-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--cor-fundo); /* Fundo geral da aplicação */
+}
+
+/* Área principal (à direita da sidebar) */
+.main-content {
+  flex: 1;
+  margin-left: 260px; /* IMPORTANTE: Deve ser igual à largura da Sidebar */
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Ocupa altura total para permitir scroll interno */
+  width: calc(100% - 260px); /* Garante que não estoure a largura */
+}
+
+/* Barra superior (Cabeçalho) */
+.top-bar {
+  height: 70px;
+  background-color: #1a1a1a; /* Mesmo tom da Sidebar */
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  flex-shrink: 0; /* Impede que o header encolha */
+  width: 100%;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  color: var(--cor-texto);
+  font-weight: 600;
+}
+
+/* Badge do Tenant (Escritório) */
+.tenant-info {
+  background-color: #2a2a2a;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #888;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tenant-info strong {
+  color: var(--cor-primaria); /* Vinho */
+  font-weight: 700;
+}
+
+/* Área de conteúdo com scroll */
+.content-scrollable {
+  flex: 1;
+  overflow-y: auto; /* Apenas o conteúdo rola, sidebar e header ficam fixos */
+  padding: 2rem;
+  position: relative;
+}
+
+/* Responsividade básica para telas menores (opcional) */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+  .sidebar {
+    display: none; /* Em mobile esconderíamos a sidebar (futuro) */
+  }
+}

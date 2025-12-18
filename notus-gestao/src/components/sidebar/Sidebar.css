@@ -1,0 +1,159 @@
+/* src/components/Sidebar/Sidebar.css */
+
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  background-color: #1a1a1a; /* Cinza Escuro Fundo */
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  position: fixed; /* Fixa na esquerda */
+  left: 0;
+  top: 0;
+  z-index: 100; /* Garante que fique acima de outros elementos se necessário */
+}
+
+/* --- Cabeçalho do Menu --- */
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.sidebar-header h2 {
+  font-size: 1.4rem;
+  color: #fff;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.sidebar-header span {
+  color: var(--cor-primaria); /* Vinho definido no global.css */
+}
+
+/* --- Perfil do Usuário --- */
+.user-profile {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #222; /* Leve destaque do fundo */
+  border-bottom: 1px solid #333;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--cor-primaria);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  flex-shrink: 0; /* Não esmaga o circulo */
+}
+
+.user-details {
+  overflow: hidden; /* Evita que nomes longos quebrem o layout */
+}
+
+.user-details .name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-details .role {
+  font-size: 0.75rem;
+  color: #888;
+  background-color: #333;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* --- Navegação --- */
+.sidebar-nav {
+  flex: 1; /* Ocupa todo o espaço vertical disponível */
+  padding: 1rem;
+  overflow-y: auto; /* Permite rolar se o menu for muito longo */
+}
+
+/* Estiliza a barra de rolagem para ficar sutil */
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: #444; 
+  border-radius: 5px;
+}
+
+.section-title {
+  font-size: 0.7rem;
+  color: #666;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  letter-spacing: 1px;
+  padding-left: 10px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  color: #bbb;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.menu-item:hover {
+  background-color: #2a2a2a;
+  color: #fff;
+  padding-left: 20px; /* Efeito de deslizar para a direita */
+}
+
+.menu-item.active {
+  background-color: var(--cor-primaria);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- Rodapé (Botão Sair) --- */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid #333;
+  background-color: #1a1a1a;
+}
+
+.btn-logout {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #444;
+  color: #aaa;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-logout:hover {
+  background-color: #333;
+  color: #fff;
+  border-color: #666;
+}

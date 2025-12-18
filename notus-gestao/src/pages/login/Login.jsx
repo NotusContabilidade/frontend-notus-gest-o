@@ -1,10 +1,11 @@
-// src/pages/Login/Login.jsx
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
-import './Login.css'; // Importa o CSS específico desta pasta
+import './Login.css';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +22,10 @@ const Login = () => {
     }
 
     const result = await login(email, password, tenantId);
-    if (!result.success) {
+    
+    if (result.success) {
+      navigate('/dashboard'); 
+    } else {
       setError(result.message);
     }
   };
