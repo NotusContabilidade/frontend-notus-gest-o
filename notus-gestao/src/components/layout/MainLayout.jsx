@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
-import './MainLayout.css'; // Importa o CSS que acabamos de criar
+import './MainLayout.css'; 
 
 const MainLayout = ({ children, titulo }) => {
   const { logout, user } = useContext(AuthContext);
@@ -13,7 +13,6 @@ const MainLayout = ({ children, titulo }) => {
     navigate('/login');
   };
 
-  // Itens do Menu (Adicione novas rotas aqui se precisar)
   const menuItems = [
     { path: '/dashboard', label: 'Visão Geral', icon: '📊' },
     { path: '/clientes', label: 'Carteira de Clientes', icon: '🏢' },
@@ -25,19 +24,21 @@ const MainLayout = ({ children, titulo }) => {
   return (
     <div className="main-layout">
       
-      {/* --- BARRA LATERAL (SIDEBAR) --- */}
+      {/* --- SIDEBAR --- */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          {/* Tenta carregar a logo. Se não achar, o alt text aparece. */}
-          <img 
-            src="/assets/logo_notus.jpg" 
-            alt="Nótus Contábil" 
-            className="sidebar-logo"
-            onError={(e) => {
-              e.target.style.display = 'none'; // Esconde imagem quebrada
-              e.target.parentElement.innerText = 'NÓTUS (Sem Logo)'; // Mostra texto fallback
-            }}
-          />
+          {/* AQUI ESTÁ A MÁGICA: Link envolve a imagem e aplica a classe de borda */}
+          <Link to="/dashboard" className="logo-wrapper" title="Voltar para o Início">
+            <img 
+              src="/assets/logo_notus.jpg" 
+              alt="Nótus Contábil" 
+              className="sidebar-logo"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<span style="color:#fff; font-weight:bold;">NÓTUS</span>';
+              }}
+            />
+          </Link>
         </div>
 
         <nav className="sidebar-nav">
@@ -57,6 +58,10 @@ const MainLayout = ({ children, titulo }) => {
         </nav>
 
         <div className="sidebar-footer">
+          <div style={{marginBottom: '10px', color: '#666', fontSize: '0.8rem', textAlign: 'center'}}>
+            <small>Logado como:</small><br/>
+            <strong style={{color: '#fff'}}>{user?.nome || 'Usuário'}</strong>
+          </div>
           <button onClick={handleLogout} className="btn-logout">
             <span>Sair do Sistema</span> 🚪
           </button>
@@ -65,7 +70,6 @@ const MainLayout = ({ children, titulo }) => {
 
       {/* --- ÁREA DE CONTEÚDO --- */}
       <main className="content-area">
-        {/* Barra Superior Fixa */}
         <header className="top-bar">
           <h1>{titulo}</h1>
           
@@ -75,7 +79,6 @@ const MainLayout = ({ children, titulo }) => {
           </div>
         </header>
         
-        {/* Onde o conteúdo da página rola (Scroll) */}
         <div className="page-content">
           {children}
         </div>

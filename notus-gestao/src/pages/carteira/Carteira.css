@@ -1,0 +1,160 @@
+/* src/pages/Carteira/Carteira.css */
+
+.carteira-container {
+  height: calc(100vh - 100px); /* Ocupa a altura disponível menos o topo */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Evita scroll na página toda, apenas no board */
+}
+
+.carteira-header {
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.carteira-header h2 {
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.carteira-header p {
+  color: #888;
+}
+
+/* --- O Board (Área das Colunas) --- */
+.kanban-board {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* Scroll horizontal se tiver muitos contadores */
+  padding-bottom: 20px;
+  align-items: flex-start;
+}
+
+/* Estiliza a barra de rolagem horizontal */
+.kanban-board::-webkit-scrollbar {
+  height: 8px;
+}
+.kanban-board::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+/* --- Coluna (O Contador) --- */
+.kanban-col {
+  min-width: 320px;
+  max-width: 320px;
+  background-color: var(--cor-painel);
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%; /* Respeita a altura do pai */
+}
+
+.col-header {
+  padding: 15px;
+  border-bottom: 1px solid var(--cor-borda);
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.col-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: var(--cor-primaria);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.col-info h3 {
+  margin: 0;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+
+.col-info span {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.col-total {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--sucesso);
+  background-color: rgba(46, 125, 50, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* --- Corpo da Coluna (Lista de Cards) --- */
+.col-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto; /* Scroll vertical dentro da coluna */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- Card do Cliente --- */
+.client-card {
+  background-color: #252525;
+  border: 1px solid #333;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: grab; /* Mãozinha aberta */
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.client-card:hover {
+  border-color: var(--cor-primaria);
+  background-color: #2a2a2a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.client-card:active {
+  cursor: grabbing; /* Mãozinha fechada ao arrastar */
+  transform: scale(0.98);
+}
+
+.card-title {
+  color: #ddd;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limita texto a 2 linhas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.card-price {
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* Estado visual quando arrasta por cima de uma coluna */
+.kanban-col.drag-over {
+  border-color: var(--cor-primaria);
+  background-color: rgba(128, 0, 32, 0.05);
+}

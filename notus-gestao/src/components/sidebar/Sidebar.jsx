@@ -15,7 +15,7 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <h2>Nótus <span>Gestão</span></h2>
+        <h2>Hub <span>Nótus</span></h2>
       </div>
 
       <div className="user-profile">
@@ -24,8 +24,8 @@ const Sidebar = () => {
           {user?.nome ? user.nome.charAt(0).toUpperCase() : 'U'}
         </div>
         <div className="user-details">
-          <p className="name">{user?.nome || user?.email || 'Usuário'}</p>
-          <span className="role">{user?.role || 'Admin'}</span>
+          <p className="name">{user?.nome || 'Usuário'}</p>
+          <span className="role">{user?.role === 'ADMIN' ? 'Sócio / Admin' : 'Contador'}</span>
         </div>
       </div>
 
@@ -33,31 +33,42 @@ const Sidebar = () => {
         <p className="section-title">PRINCIPAL</p>
         
         <Link to="/dashboard" className={isActive('/dashboard')}>
-          📊 Visão Geral
+          <span className="icon">📊</span> Visão Geral
         </Link>
         
         <Link to="/clientes" className={isActive('/clientes')}>
-          🏢 Carteira de Clientes
+          <span className="icon">🏢</span> Carteira de Clientes
         </Link>
 
+        {/* Exibe gestão de equipe apenas para Admins, se quiser bloquear visualmente */}
         <Link to="/usuarios" className={isActive('/usuarios')}>
-          👥 Equipe & Usuários
+          <span className="icon">👥</span> Equipe & Usuários
+        </Link>
+
+        <p className="section-title">FINANCEIRO</p>
+
+        <Link to="/financeiro" className={isActive('/financeiro')}>
+          <span className="icon">💰</span> Minha Remuneração
+        </Link>
+
+        <Link to="/carteira" className={isActive('/carteira')}>
+          <span className="icon">🔀</span> Gestão de Carteira
         </Link>
 
         <p className="section-title">ESTRATÉGIA</p>
 
         <Link to="/processos" className={isActive('/processos')}>
-          ⚙️ Processos
+          <span className="icon">⚙️</span> Processos
         </Link>
 
         <Link to="/auditoria" className={isActive('/auditoria')}>
-          👁️ Auditoria
+          <span className="icon">👁️</span> Auditoria
         </Link>
       </nav>
 
       <div className="sidebar-footer">
         <button onClick={logout} className="btn-logout">
-          🚪 Sair
+          <span>Sair do Sistema</span>
         </button>
       </div>
     </aside>

@@ -1,0 +1,89 @@
+/* src/pages/Financeiro/Financeiro.css */
+
+.financeiro-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+/* Reutilizando estrutura de cards do Dashboard, mas com cores específicas */
+.valor-destaque {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 10px 0;
+  color: #fff;
+}
+
+.valor-secundario {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Cores específicas para dinheiro */
+.dinheiro-positivo { color: var(--sucesso); }
+.dinheiro-neutro { color: #fff; }
+.dinheiro-base { color: #2196f3; }
+
+/* Tabela de Histórico */
+.historico-section {
+  margin-top: 40px;
+  background-color: var(--cor-painel);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-out;
+}
+
+.historico-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--cor-borda);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.historico-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+}
+
+.tabela-financeira {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-financeira th {
+  text-align: left;
+  padding: 15px 20px;
+  background-color: rgba(0,0,0,0.2);
+  color: #888;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.tabela-financeira td {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--cor-borda);
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.tabela-financeira tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-financeira tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.status-fechado {
+  background-color: rgba(46, 125, 50, 0.2);
+  color: #4caf50;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}

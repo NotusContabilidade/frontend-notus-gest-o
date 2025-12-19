@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.jsx
 import { createContext, useState, useEffect } from 'react';
 import api from '../services/api';
 
@@ -7,56 +6,82 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Estado para saber se o token é válido
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
-    const recoveredToken = localStorage.getItem('notus_token');
-    const recoveredUser = localStorage.getItem('notus_user');
+    const recuperarSessao = async () => {
+      const token = localStorage.getItem('notus_token');
+      const tenantId = localStorage.getItem('notus_tenant');
 
-    if (recoveredToken && recoveredUser) {
-      api.defaults.headers.Authorization = `Bearer ${recoveredToken}`;
-      setUser(JSON.parse(recoveredUser));
-    }
-    setLoading(false);
+      if (token && tenantId) {
+        api.defaults.headers.Authorization = `Bearer ${token}`;
+        try {
+          // Busca os dados atualizados do usuário (Nome, Role, etc)
+          await carregarUsuarioAtual();
+          setAuthenticated(true);
+        } catch (error) {
+          console.error("Sessão inválida:", error);
+          logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    recuperarSessao();
   }, []);
+
+  const carregarUsuarioAtual = async () => {
+    try {
+      // Chama o endpoint que retorna os dados do token (UserController)
+      // Ajuste a rota se seu backend estiver '/users/me' ou '/usuarios/me'
+      const response = await api.get('/usuarios/me'); 
+      setUser(response.data);
+    } catch (error) {
+      console.error("Erro ao carregar usuário:", error);
+      throw error;
+    }
+  };
 
   const login = async (email, password, tenantId) => {
     try {
-      // Bate no AuthController.java do Backend
+      // 1. Autentica e pega o Token
       const response = await api.post('/auth/authenticate', {
         email,
         password,
-        tenantId // Necessário para o Multi-Tenant
+        tenantId
       });
 
       const { token, tenantId: responseTenant } = response.data;
 
-      // Salva dados
+      // 2. Salva Token e Tenant
       localStorage.setItem('notus_token', token);
       localStorage.setItem('notus_tenant', responseTenant);
-      
-      const userData = { email, tenantId: responseTenant };
-      localStorage.setItem('notus_user', JSON.stringify(userData));
-
       api.defaults.headers.Authorization = `Bearer ${token}`;
-      setUser(userData);
+
+      // 3. Busca os detalhes do usuário imediatamente
+      await carregarUsuarioAtual();
       
+      setAuthenticated(true);
       return { success: true };
+
     } catch (error) {
       console.error("Erro Login:", error);
-      return { success: false, message: "Falha ao entrar. Verifique tenant e credenciais." };
+      return { success: false, message: "Falha ao entrar. Verifique credenciais." };
     }
   };
 
   const logout = () => {
     localStorage.removeItem('notus_token');
-    localStorage.removeItem('notus_user');
     localStorage.removeItem('notus_tenant');
-    api.defaults.headers.Authorization = null;
+    localStorage.removeItem('notus_user'); // Limpa legado se houver
+    api.defaults.headers.Authorization = undefined;
     setUser(null);
+    setAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ authenticated: !!user, user, loading, login, logout }}>
+    <AuthContext.Provider value={{ authenticated, user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

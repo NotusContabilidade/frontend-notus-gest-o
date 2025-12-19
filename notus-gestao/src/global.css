@@ -1,27 +1,30 @@
 /* src/global.css */
 
-/* --- PALETA DE CORES NÓTUS (TEMA ESCURO) --- */
 :root {
-  /* Cor Principal (Vinho da Logo) */
-  --cor-primaria: #800020;       /* Vinho puro */
-  --cor-primaria-hover: #a30029; /* Um pouco mais claro para quando passar o mouse */
+  /* --- CORES DA MARCA (NÓTUS) --- */
+  /* Ajustei para um Vinho Marsala (mais corporativo). 
+     Se quiser a cor EXATA da sua imagem, use um "Color Picker" 
+     na sua logo e cole o código HEX aqui embaixo: */
+  --cor-primaria: #722f37;       
+  
+  --cor-primaria-hover: #913d46; /* Um tom um pouco mais claro para o hover */
 
-  /* Tons de Fundo Escuro */
-  --cor-fundo: #0a0a0a;          /* Quase preto absoluto para o fundo geral */
-  --cor-painel: #141414;         /* Cinza muito escuro para Sidebar e Cards */
-  --cor-borda: #2a2a2a;          /* Bordas sutis */
+  /* --- TEMA ESCURO (Fundo) --- */
+  --cor-fundo: #0a0a0a;          /* Preto quase absoluto */
+  --cor-painel: #141414;         /* Cinza muito escuro para cards/sidebar */
+  --cor-borda: #2a2a2a;          /* Bordas sutis para separar elementos */
 
-  /* Tipografia */
-  --cor-texto: #e0e0e0;          /* Branco gelo (não cansa a vista) */
-  --cor-texto-secundario: #a0a0a0; /* Cinza para descrições */
+  /* --- TEXTOS --- */
+  --cor-texto: #e0e0e0;          /* Branco gelo */
+  --cor-texto-secundario: #a0a0a0; /* Cinza médio */
 
-  /* Status */
+  /* --- STATUS --- */
   --sucesso: #2e7d32; /* Verde */
   --erro: #c62828;    /* Vermelho */
   --aviso: #f9a825;   /* Amarelo */
 }
 
-/* --- APLICAÇÃO GERAL --- */
+/* Reset Básico */
 * {
   margin: 0;
   padding: 0;
@@ -30,23 +33,19 @@
 
 html, body {
   height: 100%;
-  background-color: var(--cor-fundo); /* Aplica o fundo preto */
-  color: var(--cor-texto); /* Aplica o texto claro */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: 'Inter', sans-serif; /* Fonte moderna */
   -webkit-font-smoothing: antialiased;
 }
 
-/* Padrão para links e botões */
-a { text-decoration: none; color: inherit; transition: 0.2s; }
-button { cursor: pointer; border: none; outline: none; font-family: inherit; }
-
-/* Scrollbar Escura */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+/* Scrollbar Personalizada (Preta e Vinho) */
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--cor-fundo); }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--cor-primaria); }
 
-/* Animações Utilitárias */
+/* Animações Globais */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 

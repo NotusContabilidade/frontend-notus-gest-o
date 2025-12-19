@@ -1,9 +1,13 @@
 import api from './api';
 
 const clientService = {
+  // --- LEITURA (Módulo Core) ---
+  // Usa o ClienteController.java (@RequestMapping("/api/clientes"))
+  
   listarTodos: async () => {
     try {
-      const response = await api.get('/clients');
+      // CORREÇÃO: De '/clients' para '/clientes'
+      const response = await api.get('/clientes');
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar clientes:", error);
@@ -13,7 +17,8 @@ const clientService = {
 
   buscarPorId: async (id) => {
     try {
-      const response = await api.get(`/clients/${id}`);
+      // CORREÇÃO: De '/clients' para '/clientes'
+      const response = await api.get(`/clientes/${id}`);
       return response.data;
     } catch (error) {
       console.error("Erro ao buscar cliente:", error);
@@ -21,9 +26,14 @@ const clientService = {
     }
   },
 
+  // --- ESCRITA (Módulo Gestão) ---
+  // Usa o GestaoClienteController.java (@RequestMapping("/api/gestao/clientes"))
+  // Isso é vital porque o ClienteController do Core é "Read-Only" (Apenas Leitura)
+
   criar: async (dadosCliente) => {
     try {
-      const response = await api.post('/clients', dadosCliente);
+      // CORREÇÃO: Rota aponta para a API de Gestão
+      const response = await api.post('/gestao/clientes', dadosCliente);
       return response.data;
     } catch (error) {
       console.error("Erro ao criar cliente:", error);
@@ -33,7 +43,8 @@ const clientService = {
 
   atualizar: async (id, dadosAtualizados) => {
     try {
-      const response = await api.put(`/clients/${id}`, dadosAtualizados);
+      // CORREÇÃO: Rota aponta para a API de Gestão
+      const response = await api.put(`/gestao/clientes/${id}`, dadosAtualizados);
       return response.data;
     } catch (error) {
       console.error("Erro ao atualizar cliente:", error);
@@ -43,9 +54,35 @@ const clientService = {
 
   deletar: async (id) => {
     try {
-      await api.delete(`/clients/${id}`);
+      // CORREÇÃO: Rota aponta para a API de Gestão
+      await api.delete(`/gestao/clientes/${id}`);
     } catch (error) {
-      console.error("Erro ao remover cliente:", error);
+      console.error("Erro ao deletar cliente:", error);
+      throw error;
+    }
+  },
+
+  // --- FUNCIONALIDADES EXTRAS DE GESTÃO ---
+  
+  transferirCarteira: async (contadorAntigoId, contadorNovoId) => {
+    try {
+      const response = await api.post('/gestao/clientes/transferir-carteira', {
+        contadorAntigoId,
+        contadorNovoId
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao transferir carteira:", error);
+      throw error;
+    }
+  },
+
+  alterarRegime: async (dadosAlteracao) => {
+    try {
+      const response = await api.post('/gestao/clientes/alterar-regime', dadosAlteracao);
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao alterar regime:", error);
       throw error;
     }
   }

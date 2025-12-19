@@ -2,13 +2,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { useContext } from 'react';
 
-// Importação das Páginas
+// Importação das Páginas Existentes
 import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
-import Clientes from './pages/Clientes/Clientes';
-import Processos from './pages/Processos/Processos';
-import Usuarios from './pages/Usuarios/Usuarios';
-import Auditoria from './pages/Auditoria/Auditoria'; // Se tiver essa página
+import Clientes from './pages/clientes/Clientes';
+import Processos from './pages/processos/Processos';
+import Usuarios from './pages/usuarios/Usuarios';
+import Auditoria from './pages/Auditoria/Auditoria';
+
+// --- NOVAS PÁGINAS (Módulo Gestão) ---
+import Financeiro from './pages/Financeiro/Financeiro';
+import Carteira from './pages/Carteira/Carteira';
 
 // Layout Principal (A estrutura fixa)
 import MainLayout from './components/Layout/MainLayout';
@@ -18,15 +22,14 @@ const PrivateRoute = ({ children, titulo }) => {
   const { authenticated, loading } = useContext(AuthContext);
 
   if (loading) {
-    return <div style={{display:'flex', justifyContent:'center', marginTop:'50px'}}>Carregando...</div>;
+    return <div style={{display:'flex', justifyContent:'center', marginTop:'50px', color:'#fff'}}>Carregando sistema...</div>;
   }
 
   if (!authenticated) {
     return <Navigate to="/login" />;
   }
 
-  // AQUI ESTÁ O SEGREDO: O Layout envolve o filho (Página)
-  // Isso mantém a sidebar fixa enquanto o miolo muda.
+  // O Layout envolve o filho (Página)
   return (
     <MainLayout titulo={titulo}>
       {children}
@@ -42,7 +45,7 @@ const App = () => {
           {/* Rota Pública */}
           <Route path="/login" element={<Login />} />
 
-          {/* Rotas Privadas (Protegidas) */}
+          {/* --- ROTAS PRINCIPAIS --- */}
           <Route 
             path="/dashboard" 
             element={
@@ -62,15 +65,6 @@ const App = () => {
           />
 
           <Route 
-            path="/processos" 
-            element={
-              <PrivateRoute titulo="Processos & Tarefas">
-                <Processos />
-              </PrivateRoute>
-            } 
-          />
-          
-          <Route 
             path="/usuarios" 
             element={
               <PrivateRoute titulo="Gestão de Equipe">
@@ -79,12 +73,41 @@ const App = () => {
             } 
           />
 
-          {/* Se você tiver a página de Auditoria criada */}
+          {/* --- NOVAS ROTAS (MÓDULO GESTÃO) --- */}
+          
+          <Route 
+            path="/financeiro" 
+            element={
+              <PrivateRoute titulo="Painel Financeiro">
+                <Financeiro />
+              </PrivateRoute>
+            } 
+          />
+
+          <Route 
+            path="/carteira" 
+            element={
+              <PrivateRoute titulo="Distribuição de Carteira">
+                <Carteira />
+              </PrivateRoute>
+            } 
+          />
+
+          {/* --- ROTAS ESTRATÉGICAS --- */}
+
+          <Route 
+            path="/processos" 
+            element={
+              <PrivateRoute titulo="Processos & Tarefas">
+                <Processos />
+              </PrivateRoute>
+            } 
+          />
+
           <Route 
             path="/auditoria" 
             element={
               <PrivateRoute titulo="Auditoria do Sistema">
-                {/* Se ainda não criou o arquivo Auditoria.jsx, comente a linha abaixo */}
                  <Auditoria /> 
               </PrivateRoute>
             } 
