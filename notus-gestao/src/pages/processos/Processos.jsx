@@ -1,31 +1,30 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '../../components/layout/MainLayout';
-import processoService from '../../services/processoService'; // <--- SEM CHAVES AGORA
+import processoService from '../../services/processoService';
 import './Processos.css';
 
 const Processos = () => {
-  const [processos, setProcessos] = useState([]);
+  const [modelos, setModelos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [formAberto, setFormAberto] = useState(false);
+  const [formVisivel, setFormVisivel] = useState(false);
 
+  // Estado do Formulário
   const [novoProcesso, setNovoProcesso] = useState({
-    nome: '',
-    descricao: '',
-    periodicidade: 'MENSAL',
-    departamento: 'FISCAL'
+    nome: '', 
+    descricao: '', 
+    departamento: 'FISCAL' // Valor padrão
   });
 
   useEffect(() => {
-    carregarProcessos();
+    carregarModelos();
   }, []);
 
-  const carregarProcessos = async () => {
+  const carregarModelos = async () => {
     try {
       setLoading(true);
       const dados = await processoService.listarTodos();
-      setProcessos(dados);
+      setModelos(dados);
     } catch (error) {
-      console.error("Erro ao carregar processos");
+      console.error("Erro ao carregar processos:", error);
     } finally {
       setLoading(false);
     }
@@ -38,133 +37,152 @@ const Processos = () => {
 
   const handleSalvar = async (e) => {
     e.preventDefault();
-    if (!novoProcesso.nome) return alert("O nome é obrigatório.");
-
     try {
       await processoService.criar(novoProcesso);
-      setFormAberto(false);
-      setNovoProcesso({ nome: '', descricao: '', periodicidade: 'MENSAL', departamento: 'FISCAL' });
-      carregarProcessos();
+      alert("Modelo de processo criado com sucesso!");
+      
+      // Limpa e fecha o form
+      setNovoProcesso({ nome: '', descricao: '', departamento: 'FISCAL' });
+      setFormVisivel(false);
+      
+      // Recarrega a lista
+      carregarModelos();
     } catch (error) {
-      alert("Erro ao salvar modelo de processo.");
+      console.error(error);
+      alert("Erro ao salvar. Verifique se o backend está rodando.");
     }
   };
 
   const handleExcluir = async (id) => {
-    if (window.confirm("Deseja excluir este modelo? Tarefas criadas não serão afetadas.")) {
+    if (window.confirm("Tem certeza que deseja excluir este modelo?")) {
       try {
         await processoService.deletar(id);
-        carregarProcessos();
+        carregarModelos();
       } catch (error) {
-        alert("Erro ao excluir.");
+        alert("Erro ao excluir o modelo.");
       }
     }
   };
 
   return (
-    <MainLayout titulo="Modelos de Processos">
+    <div className="processos-container anime-fade-in">
       
-      <div className="processos-container">
-        
-        <div className="top-action">
-          <p className="description-text">
-            Defina os padrões de tarefas recorrentes (Ex: Fechamento, Folha, DAS).
-          </p>
-          <button 
-            className="btn-add-process"
-            onClick={() => setFormAberto(!formAberto)}
-          >
-            {formAberto ? 'Fechar Painel' : '+ Novo Modelo'}
-          </button>
-        </div>
-
-        {/* Formulário de Criação */}
-        {formAberto && (
-          <div className="form-panel">
-            <h3>Criar Novo Modelo</h3>
-            <form onSubmit={handleSalvar}>
-              <div className="form-row">
-                <div className="input-block">
-                  <label>Nome do Processo</label>
-                  <input 
-                    name="nome" 
-                    placeholder="Ex: Fechamento Simples Nacional" 
-                    value={novoProcesso.nome}
-                    onChange={handleChange}
-                  />
-                </div>
-                
-                <div className="input-block">
-                  <label>Departamento</label>
-                  <select name="departamento" value={novoProcesso.departamento} onChange={handleChange}>
-                    <option value="FISCAL">Fiscal</option>
-                    <option value="CONTABIL">Contábil</option>
-                    <option value="DP">Departamento Pessoal</option>
-                    <option value="LEGAL">Legalização</option>
-                  </select>
-                </div>
-
-                <div className="input-block">
-                  <label>Periodicidade</label>
-                  <select name="periodicidade" value={novoProcesso.periodicidade} onChange={handleChange}>
-                    <option value="MENSAL">Mensal</option>
-                    <option value="TRIMESTRAL">Trimestral</option>
-                    <option value="ANUAL">Anual</option>
-                    <option value="SEMANAL">Semanal</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="input-block">
-                <label>Descrição / Instruções</label>
-                <textarea 
-                  name="descricao" 
-                  rows="3"
-                  placeholder="Descreva o que deve ser feito neste processo..."
-                  value={novoProcesso.descricao}
-                  onChange={handleChange}
-                ></textarea>
-              </div>
-
-              <div className="form-actions">
-                <button type="submit" className="btn-confirm">Criar Modelo</button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Grid de Cards */}
-        <div className="process-grid">
-          {loading ? (
-            <p>Carregando modelos...</p>
-          ) : processos.length === 0 ? (
-            <div className="empty-box">Nenhum processo configurado.</div>
-          ) : (
-            processos.map((proc) => (
-              <div className="process-card" key={proc.id}>
-                <div className={`card-header ${proc.departamento}`}>
-                  <span className="dept-tag">{proc.departamento}</span>
-                  <button onClick={() => handleExcluir(proc.id)} className="btn-close">×</button>
-                </div>
-                
-                <div className="card-body">
-                  <h4>{proc.nome}</h4>
-                  <p>{proc.descricao || 'Sem descrição definida.'}</p>
-                </div>
-
-                <div className="card-footer">
-                  <span className="period-badge">
-                    ⏱ {proc.periodicidade}
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
+      {/* CABEÇALHO COM AÇÕES */}
+      <div className="header-actions">
+         <div className="search-bar">
+           <input 
+             type="text" 
+             placeholder="🔍 Buscar modelos de tarefas..." 
+             className="search-input"
+           />
+         </div>
+         
+         {!formVisivel && (
+           <button className="btn-novo-processo" onClick={() => setFormVisivel(true)}>
+             + Novo Modelo
+           </button>
+         )}
       </div>
 
-    </MainLayout>
+      {/* FORMULÁRIO DE CADASTRO (WIZARD) */}
+      {formVisivel && (
+        <div className="cadastro-card">
+           <h3>Criar Novo Modelo de Tarefa</h3>
+           <form onSubmit={handleSalvar}>
+             
+             <div className="form-row">
+               <div className="field-group col-6">
+                 <label>Título do Processo</label>
+                 <input 
+                   name="nome"
+                   value={novoProcesso.nome} 
+                   onChange={handleChange} 
+                   placeholder="Ex: Admissão de Funcionário"
+                   required 
+                 />
+               </div>
+               <div className="field-group col-6">
+                 <label>Departamento Responsável</label>
+                 <select 
+                   name="departamento"
+                   value={novoProcesso.departamento} 
+                   onChange={handleChange}
+                 >
+                   <option value="FISCAL">Fiscal</option>
+                   <option value="CONTABIL">Contábil</option>
+                   <option value="PESSOAL">Pessoal (DP)</option>
+                   <option value="FINANCEIRO">Financeiro</option>
+                   <option value="LEGAL">Legal / Societário</option>
+                   <option value="TI">TI / Tecnologia</option>
+                 </select>
+               </div>
+             </div>
+
+             <div className="form-row">
+               <div className="field-group col-12">
+                 <label>Descrição Detalhada</label>
+                 <textarea 
+                    name="descricao"
+                    value={novoProcesso.descricao} 
+                    onChange={handleChange}
+                    placeholder="Descreva o objetivo deste processo..."
+                 />
+               </div>
+             </div>
+
+             <div className="form-actions-bottom">
+               <button type="button" className="btn-cancelar" onClick={() => setFormVisivel(false)}>
+                 Cancelar
+               </button>
+               <button type="submit" className="btn-salvar">
+                 Salvar Modelo
+               </button>
+             </div>
+           </form>
+        </div>
+      )}
+
+      {/* TABELA DE LISTAGEM */}
+      <div className="table-responsive">
+        <table className="tabela-custom">
+          <thead>
+            <tr>
+              <th style={{width: '30%'}}>Título</th>
+              <th style={{width: '15%'}}>Departamento</th>
+              <th style={{width: '40%'}}>Descrição</th>
+              <th style={{textAlign: 'right'}}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="4" style={{textAlign: 'center', padding: '20px'}}>Carregando...</td></tr>
+            ) : modelos.length === 0 ? (
+              <tr><td colSpan="4" style={{textAlign: 'center', padding: '30px', color: '#888'}}>Nenhum modelo cadastrado.</td></tr>
+            ) : (
+              modelos.map(proc => (
+                <tr key={proc.id}>
+                  <td><strong>{proc.titulo}</strong></td>
+                  <td>
+                    <span className="badge-dept">{proc.departamentoResponsavel}</span>
+                  </td>
+                  <td>{proc.descricao || <span style={{color:'#666', fontStyle:'italic'}}>Sem descrição</span>}</td>
+                  <td style={{textAlign: 'right'}}>
+                    <button 
+                      className="btn-icon-delete" 
+                      title="Excluir Modelo"
+                      onClick={() => handleExcluir(proc.id)}
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
   );
 };
 

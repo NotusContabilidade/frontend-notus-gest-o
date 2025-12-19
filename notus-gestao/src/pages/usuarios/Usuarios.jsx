@@ -1,38 +1,33 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '../../components/layout/MainLayout';
-
-// CORREÇÃO AQUI: Importação sem chaves (Default Import)
-import userService from '../../services/userService'; 
-
+import userService from '../../services/userService';
 import './Usuarios.css';
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState('');
   const [formVisivel, setFormVisivel] = useState(false);
 
-  // Estado do formulário
+  // Estado do Formulário
   const [novoUsuario, setNovoUsuario] = useState({
     nome: '',
     email: '',
     password: '',
-    role: 'USER',
-    departamento: 'Geral',
-    tenantId: localStorage.getItem('notus_tenant') 
+    role: 'CONTADOR', // Valor padrão
+    departamento: 'FISCAL' // Valor padrão
   });
 
   useEffect(() => {
-    carregarDados();
+    carregarUsuarios();
   }, []);
 
-  const carregarDados = async () => {
+  const carregarUsuarios = async () => {
     try {
       setLoading(true);
       const dados = await userService.listarTodos();
+      console.log("Usuários recebidos:", dados);
       setUsuarios(dados);
     } catch (error) {
-      setErro("Erro ao conectar com o servidor.");
+      console.error("Erro ao listar usuários:", error);
     } finally {
       setLoading(false);
     }
@@ -47,69 +42,174 @@ const Usuarios = () => {
     e.preventDefault();
     try {
       await userService.criar(novoUsuario);
+      alert("Colaborador cadastrado com sucesso!");
+      
+      // Limpa e fecha
+      setNovoUsuario({ nome: '', email: '', password: '', role: 'CONTADOR', departamento: 'FISCAL' });
       setFormVisivel(false);
-      setNovoUsuario({ ...novoUsuario, nome: '', email: '', password: '' });
-      carregarDados(); 
-      alert("Usuário criado com sucesso!");
+      
+      // Atualiza a lista
+      carregarUsuarios();
     } catch (error) {
-      alert("Erro ao criar usuário. Verifique os dados.");
+      console.error(error);
+      alert("Erro ao cadastrar. Verifique se o e-mail já existe.");
     }
   };
 
   const handleExcluir = async (id) => {
-    if (window.confirm("Tem certeza que deseja remover este usuário?")) {
+    if (window.confirm("Tem certeza que deseja remover este acesso?")) {
       try {
         await userService.deletar(id);
-        carregarDados();
+        carregarUsuarios();
       } catch (error) {
-        alert("Erro ao excluir.");
+        alert("Erro ao excluir usuário.");
       }
     }
   };
 
   return (
-    <MainLayout titulo="Gestão de Equipe">
-      <div className="usuarios-container">
-        <div className="actions-bar">
-          <button className="btn-novo" onClick={() => setFormVisivel(!formVisivel)}>
-            {formVisivel ? '✖ Cancelar' : '+ Novo Usuário'}
-          </button>
-        </div>
-
-        {formVisivel && (
-          <form className="form-novo-usuario" onSubmit={handleSalvar}>
-            <h3>Cadastrar Colaborador</h3>
-            <div className="form-grid">
-              <input name="nome" placeholder="Nome" value={novoUsuario.nome} onChange={handleChange} required />
-              <input name="email" placeholder="E-mail" value={novoUsuario.email} onChange={handleChange} required />
-              <input name="password" type="password" placeholder="Senha" value={novoUsuario.password} onChange={handleChange} required />
-              <select name="role" value={novoUsuario.role} onChange={handleChange}>
-                <option value="USER">Usuário Comum</option>
-                <option value="ADMIN">Administrador</option>
-              </select>
-            </div>
-            <button type="submit" className="btn-salvar">Salvar Registro</button>
-          </form>
-        )}
-
-        {!loading && !erro && (
-          <table className="tabela-custom">
-            <thead>
-              <tr><th>Nome</th><th>E-mail</th><th>Ações</th></tr>
-            </thead>
-            <tbody>
-              {usuarios.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.nome}</td>
-                  <td>{user.email}</td>
-                  <td><button className="btn-delete" onClick={() => handleExcluir(user.id)}>Remover</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+    <div className="usuarios-container anime-fade-in">
+      
+      {/* CABEÇALHO DE AÇÃO */}
+      <div className="header-actions">
+         <div className="search-bar">
+           <input 
+             type="text" 
+             placeholder="🔍 Buscar por nome ou e-mail..." 
+             className="search-input"
+           />
+         </div>
+         
+         {!formVisivel && (
+           <button className="btn-novo-usuario" onClick={() => setFormVisivel(true)}>
+             + Novo Colaborador
+           </button>
+         )}
       </div>
-    </MainLayout>
+
+      {/* FORMULÁRIO (CARD) */}
+      {formVisivel && (
+        <div className="cadastro-card">
+           <h3>Cadastrar Novo Membro</h3>
+           <form onSubmit={handleSalvar}>
+             
+             <div className="form-row">
+               <div className="field-group col-6">
+                 <label>Nome Completo</label>
+                 <input 
+                   name="nome"
+                   value={novoUsuario.nome} 
+                   onChange={handleChange} 
+                   required 
+                 />
+               </div>
+               <div className="field-group col-6">
+                 <label>E-mail Corporativo</label>
+                 <input 
+                   name="email"
+                   type="email"
+                   value={novoUsuario.email} 
+                   onChange={handleChange} 
+                   required 
+                 />
+               </div>
+             </div>
+
+             <div className="form-row">
+               <div className="field-group col-4">
+                 <label>Perfil de Acesso</label>
+                 <select name="role" value={novoUsuario.role} onChange={handleChange}>
+                   <option value="CONTADOR">Contador (Operacional)</option>
+                   <option value="ADMIN">Administrador (Gestor)</option>
+                 </select>
+               </div>
+               
+               <div className="field-group col-4">
+                 <label>Departamento</label>
+                 <select name="departamento" value={novoUsuario.departamento} onChange={handleChange}>
+                   <option value="FISCAL">Fiscal</option>
+                   <option value="CONTABIL">Contábil</option>
+                   <option value="PESSOAL">Pessoal / RH</option>
+                   <option value="FINANCEIRO">Financeiro</option>
+                   <option value="TI">TI / Suporte</option>
+                   <option value="LEGAL">Legal / Societário</option>
+                 </select>
+               </div>
+
+               <div className="field-group col-4">
+                 <label>Senha Inicial</label>
+                 <input 
+                   name="password"
+                   type="password"
+                   value={novoUsuario.password} 
+                   onChange={handleChange} 
+                   placeholder="Mínimo 6 caracteres"
+                   required 
+                 />
+               </div>
+             </div>
+
+             <div className="form-actions-bottom">
+               <button type="button" className="btn-cancelar" onClick={() => setFormVisivel(false)}>
+                 Cancelar
+               </button>
+               <button type="submit" className="btn-salvar">
+                 Confirmar Cadastro
+               </button>
+             </div>
+           </form>
+        </div>
+      )}
+
+      {/* LISTAGEM DE USUÁRIOS */}
+      <div className="table-responsive">
+        <table className="tabela-users">
+          <thead>
+            <tr>
+              <th style={{width: '30%'}}>Nome</th>
+              <th style={{width: '30%'}}>E-mail</th>
+              <th style={{width: '15%'}}>Departamento</th>
+              <th style={{width: '15%'}}>Perfil</th>
+              <th style={{textAlign: 'right'}}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan="5" style={{textAlign: 'center', padding: '20px'}}>Carregando equipe...</td></tr>
+            ) : usuarios.length === 0 ? (
+              <tr><td colSpan="5" style={{textAlign: 'center', padding: '30px', color: '#888'}}>Nenhum usuário encontrado.</td></tr>
+            ) : (
+              usuarios.map(user => (
+                <tr key={user.id}>
+                  <td>
+                    <strong>{user.nome}</strong>
+                  </td>
+                  <td>{user.email}</td>
+                  <td>
+                    {user.departamento || '-'}
+                  </td>
+                  <td>
+                    <span className={`badge-role ${user.role}`}>
+                      {user.role === 'ADMIN' ? 'Gestor' : 'Equipe'}
+                    </span>
+                  </td>
+                  <td style={{textAlign: 'right'}}>
+                    <button 
+                      className="btn-delete" 
+                      title="Remover Acesso"
+                      onClick={() => handleExcluir(user.id)}
+                    >
+                      Remover
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
   );
 };
 

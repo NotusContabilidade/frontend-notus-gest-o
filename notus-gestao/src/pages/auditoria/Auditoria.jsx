@@ -1,116 +1,124 @@
 import { useState, useEffect } from 'react';
-import MainLayout from '../../components/layout/MainLayout';
-import auditoriaService from '../../services/auditoriaService'; // <--- IMPORT SEM CHAVES
+import auditoriaService from '../../services/auditoriaService';
 import './Auditoria.css';
 
 const Auditoria = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtros, setFiltros] = useState({
-    dataInicio: '',
-    dataFim: '',
-    tipo: 'TODOS',
-    termo: ''
-  });
+  
+  // Estado para filtros simples no frontend
+  const [filtroTipo, setFiltroTipo] = useState('TODOS');
 
   useEffect(() => {
-    const carregarLogs = async () => {
-      try {
-        setLoading(true);
-        const dados = await auditoriaService.listarLogs(filtros);
-        setLogs(dados);
-      } catch (error) {
-        console.error("Erro ao carregar auditoria");
-        setLogs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    carregarLogs();
+  }, []);
 
-    const timeoutId = setTimeout(() => {
-      carregarLogs();
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [filtros]);
-
-  const handleFiltroChange = (e) => {
-    setFiltros({ ...filtros, [e.target.name]: e.target.value });
-  };
-
-  const getIcone = (tipo) => {
-    switch(tipo) {
-      case 'ENVIO_EMAIL': return '📧';
-      case 'VISUALIZACAO': return '👁️';
-      case 'DOWNLOAD': return '⬇️';
-      case 'ALTERACAO': return '📝';
-      case 'LOGIN': return '🔑';
-      default: return '🔹';
+  const carregarLogs = async () => {
+    setLoading(true);
+    try {
+      // Busca todos os logs do backend
+      const dados = await auditoriaService.listarLogs();
+      setLogs(dados);
+    } catch (error) {
+      console.error("Erro ao carregar auditoria:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Aplica o filtro localmente na lista
+  const logsFiltrados = logs.filter(log => {
+    if (filtroTipo === 'TODOS') return true;
+    // Verifica se o tipo do log (ex: CRIAR_CLIENTE) contém o texto do filtro
+    return log.tipo && log.tipo.includes(filtroTipo);
+  });
+
   return (
-    <MainLayout titulo="Rastro de Auditoria & Logs">
-      <div className="auditoria-container">
-        
-        <div className="filtros-bar">
-          <div className="filtro-group">
-            <label>De:</label>
-            <input type="date" name="dataInicio" value={filtros.dataInicio} onChange={handleFiltroChange} />
-          </div>
-          <div className="filtro-group">
-            <label>Até:</label>
-            <input type="date" name="dataFim" value={filtros.dataFim} onChange={handleFiltroChange} />
-          </div>
-          <div className="filtro-group">
-            <label>Tipo:</label>
-            <select name="tipo" value={filtros.tipo} onChange={handleFiltroChange}>
-              <option value="TODOS">Todos</option>
-              <option value="ENVIO_EMAIL">E-mail</option>
-              <option value="VISUALIZACAO">Visualização</option>
-              <option value="ALTERACAO">Alteração</option>
-              <option value="LOGIN">Login</option>
-            </select>
-          </div>
-          <div className="filtro-group search">
-            <input type="text" name="termo" placeholder="Buscar..." value={filtros.termo} onChange={handleFiltroChange} />
-          </div>
-        </div>
+    <div className="auditoria-container anime-fade-in">
+      
+      {/* BARRA DE FERRAMENTAS */}
+      <div className="audit-toolbar">
+        <select 
+          value={filtroTipo} 
+          onChange={(e) => setFiltroTipo(e.target.value)}
+        >
+          <option value="TODOS">Todos os Eventos</option>
+          <option value="LOGIN">Logins / Acessos</option>
+          <option value="CRIAR">Cadastros (Criação)</option>
+          <option value="ALTERAR">Edições / Alterações</option>
+          <option value="ERRO">Erros / Falhas</option>
+        </select>
 
-        <div className="timeline-area">
-          {loading ? (
-            <p className="status-text">Carregando...</p>
-          ) : logs.length === 0 ? (
-            <div className="empty-state">
-              <p>Nenhum registro encontrado.</p>
-            </div>
-          ) : (
-            <div className="timeline">
-              {logs.map((log) => (
-                <div key={log.id} className={`timeline-item ${log.tipo}`}>
-                  <div className="timeline-marker">
-                    <span className="icon">{getIcone(log.tipo)}</span>
-                  </div>
-                  <div className="timeline-content">
-                    <div className="header">
-                      <span className="time">{log.dataHora ? new Date(log.dataHora).toLocaleString() : '-'}</span>
-                      <span className="user">{log.usuarioResponsavel || 'Sistema'}</span>
-                    </div>
-                    <h4 className="action-title">{log.titulo || log.tipo}</h4>
-                    <p className="description">
-                      {log.descricao}
-                      {log.clienteAfetado && <strong className="client-tag"> | {log.clienteAfetado}</strong>}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <input 
+          type="text" 
+          placeholder="Buscar por usuário..." 
+          disabled 
+          style={{cursor: 'not-allowed', opacity: 0.6}} 
+          title="Filtro de texto em breve"
+        />
 
+        <button className="btn-refresh" onClick={carregarLogs} title="Atualizar Lista">
+          ↻
+        </button>
       </div>
-    </MainLayout>
+
+      {/* TIMELINE (LINHA DO TEMPO) */}
+      <div className="timeline">
+        {loading ? (
+          <p style={{padding: '20px', color: '#888'}}>Carregando registros...</p>
+        ) : logsFiltrados.length === 0 ? (
+          <p style={{padding: '20px', color: '#888'}}>Nenhum registro encontrado para este filtro.</p>
+        ) : (
+          logsFiltrados.map((log) => (
+            <div 
+              key={log.id} 
+              className={`timeline-item ${obterClassePorTipo(log.tipo)}`}
+            >
+              <div className="timeline-marker"></div>
+              
+              <div className="timeline-content">
+                <div className="timeline-header">
+                  <span className="timeline-time">
+                    {new Date(log.dataHora).toLocaleString('pt-BR')}
+                  </span>
+                  <span className="timeline-user">
+                    {log.usuarioResponsavel || 'Sistema'}
+                  </span>
+                </div>
+                
+                <span className="timeline-title">
+                  {formatarTitulo(log.titulo || log.tipo)}
+                </span>
+                
+                <div className="timeline-desc">
+                  {log.descricao}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+    </div>
   );
 };
+
+// --- Funções Auxiliares de Visualização ---
+
+// Define a cor da bolinha baseada no texto do tipo
+function obterClassePorTipo(tipo) {
+  if (!tipo) return '';
+  if (tipo.includes('LOGIN')) return 'LOGIN';
+  if (tipo.includes('ERRO')) return 'ERRO';
+  if (tipo.includes('CRIAR')) return 'CRIAR_CLIENTE';
+  if (tipo.includes('ALTERAR') || tipo.includes('EDITAR')) return 'ALTERACAO';
+  return '';
+}
+
+// Deixa o título mais legível (Remove underlines)
+function formatarTitulo(texto) {
+  if (!texto) return '';
+  return texto.replace(/_/g, ' ');
+}
 
 export default Auditoria;
